@@ -1,0 +1,750 @@
+/* CoachBoard Pro - UI Beautification */
+/* Modern, beautiful interface with shadows, gradients, and animations */
+
+:root {
+  /* Enhanced Colors */
+  --accent-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  --success-gradient: linear-gradient(135deg, #22c55e, #16a34a);
+  --danger-gradient: linear-gradient(135deg, #ef4444, #dc2626);
+  --warning-gradient: linear-gradient(135deg, #f59e0b, #d97706);
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.15);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.2);
+  --shadow-xl: 0 12px 48px rgba(0,0,0,0.3);
+  --shadow-glow: 0 0 20px rgba(59,130,246,0.3);
+  
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-slow: 0.4s ease;
+}
+
+/* ============ BASE STYLES ============ */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============ BUTTONS ============ */
+button, .btn {
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+button:hover, .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+button:active, .btn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Primary Button */
+.btn-primary {
+  background: var(--accent-gradient);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+}
+
+/* Secondary Button */
+.btn-secondary {
+  background: var(--bg-tertiary);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+}
+
+.btn-secondary:hover {
+  background: var(--bg-secondary);
+  border-color: var(--accent);
+}
+
+/* Danger Button */
+.btn-danger {
+  background: var(--danger-gradient);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+}
+
+/* ============ CARDS ============ */
+.card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.card-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+}
+
+.card-body {
+  padding: 16px;
+}
+
+/* ============ INPUTS ============ */
+input, select, textarea {
+  transition: all var(--transition-fast);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+}
+
+/* ============ PANELS ============ */
+.panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.panel-header {
+  background: var(--accent-gradient);
+  color: white;
+  padding: 16px 20px;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.panel-body {
+  padding: 16px;
+  overflow-y: auto;
+}
+
+/* ============ TOOLBAR ============ */
+.toolbar {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tool-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.tool-btn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text);
+}
+
+.tool-btn.active {
+  background: var(--accent);
+  color: white;
+  box-shadow: var(--shadow-glow);
+}
+
+/* ============ TOOLTIP ============ */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 12px;
+  background: var(--bg-primary);
+  color: var(--text);
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-md);
+  z-index: 1000;
+  pointer-events: none;
+}
+
+[data-tooltip]:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ============ ANIMATIONS ============ */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-fadeIn { animation: fadeIn var(--transition-normal); }
+.animate-slideInUp { animation: slideInUp var(--transition-normal); }
+.animate-slideInLeft { animation: slideInLeft var(--transition-normal); }
+.animate-pulse { animation: pulse 2s infinite; }
+.animate-spin { animation: spin 1s linear infinite; }
+
+/* ============ SCROLLBAR ============ */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* ============ STATUS INDICATORS ============ */
+.status-online {
+  color: #22c55e;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-online::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: #22c55e;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.status-offline {
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-offline::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: #ef4444;
+  border-radius: 50%;
+}
+
+/* ============ LOADING STATES ============ */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-secondary) 50%, var(--bg-tertiary) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ============ BADGES ============ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-xl);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-primary {
+  background: rgba(59,130,246,0.15);
+  color: #3b82f6;
+}
+
+.badge-success {
+  background: rgba(34,197,94,0.15);
+  color: #22c55e;
+}
+
+.badge-warning {
+  background: rgba(245,158,11,0.15);
+  color: #f59e0b;
+}
+
+.badge-danger {
+  background: rgba(239,68,68,0.15);
+  color: #ef4444;
+}
+
+/* ============ MODAL ============ */
+/* Note: Modal styles are in style.css - don't override here */
+
+/* ============ TOAST NOTIFICATIONS ============ */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toast {
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  animation: slideInLeft var(--transition-normal);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 300px;
+}
+
+.toast-success {
+  background: var(--success-gradient);
+  color: white;
+}
+
+.toast-error {
+  background: var(--danger-gradient);
+  color: white;
+}
+
+.toast-warning {
+  background: var(--warning-gradient);
+  color: white;
+}
+
+.toast-info {
+  background: var(--accent-gradient);
+  color: white;
+}
+
+/* Step/Keyframe enhancements */
+.scene-dup {
+  padding: 2px 4px;
+  cursor: pointer;
+  font-size: 9px;
+  color: var(--text3);
+  opacity: 0.6;
+  transition: all 0.15s;
+}
+.scene-dup:hover {
+  opacity: 1;
+  color: var(--accent);
+}
+.scene-info {
+  font-size: 9px;
+  color: var(--text3);
+  padding: 0 2px;
+}
+
+/* Floating Touch Toolbar */
+.touch-toolbar {
+  display: none;
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg2, #1e1e2e);
+  border: 1px solid var(--border, #333);
+  border-radius: 24px;
+  padding: 6px 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  z-index: 9000;
+  gap: 2px;
+  flex-direction: row;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.tt-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text, #fff);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.tt-btn:active {
+  background: rgba(255,255,255,0.15);
+  transform: scale(0.92);
+}
+.tt-btn.on, .tt-btn.active {
+  background: var(--accent, #3b82f6);
+  color: white;
+}
+@media (hover: none) and (pointer: coarse) {
+  .touch-toolbar {
+    display: flex;
+  }
+}
+
+/* ===== UI Polish v0.79.09 ===== */
+
+/* Smooth transitions on all interactive elements */
+button, .icon-btn, .menu-item, .layer-item, select, input[type=checkbox] {
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+}
+button:active, .icon-btn:active, .menu-item:active, .layer-item:active {
+  transform: scale(0.96);
+}
+
+/* Consistent focus ring for accessibility */
+button:focus-visible, select:focus-visible, input:focus-visible, .icon-btn:focus-visible {
+  outline: 2px solid var(--accent, #3b82f6);
+  outline-offset: 2px;
+}
+
+/* Sidebar panel transitions */
+.sb-body, .sb-body.cl {
+  transition: max-height 0.25s ease, opacity 0.2s ease;
+}
+
+/* Modal backdrop blur */
+.modal-wrap, .vid-modal-wrap {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Modal content entrance */
+.modal-content, .vid-modal-content {
+  animation: modalIn 0.2s ease;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Step cards hover effect */
+.step-card {
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+.step-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Props panel consistent spacing */
+.prop-group {
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border, #333);
+}
+.prop-group:last-child {
+  border-bottom: none;
+}
+
+/* Toast animation refinement */
+.toast.show {
+  animation: toastIn 0.3s ease, toastOut 0.3s ease 1.7s;
+}
+
+/* Header toolbar consistent spacing */
+.header-tools {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* Zoom controls better visibility */
+#zoomCtrl {
+  background: var(--bg2, #1e1e2e);
+  border: 1px solid var(--border, #333);
+  border-radius: 8px;
+  padding: 2px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Icon buttons consistent sizing */
+.icon-btn {
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 6px;
+}
+.icon-btn:hover {
+  background: rgba(255,255,255,0.08);
+}
+.icon-btn.on {
+  background: var(--accent, #3b82f6);
+  color: white;
+}
+
+/* Select dropdowns consistent styling */
+select.prop-input {
+  appearance: auto;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: var(--bg, #1a1a2e);
+  color: var(--text, #fff);
+  border: 1px solid var(--border, #333);
+}
+select.prop-input:hover {
+  border-color: var(--accent, #3b82f6);
+}
+
+/* Input fields consistent styling */
+input.prop-input, input[type=text].prop-input {
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: var(--bg, #1a1a2e);
+  color: var(--text, #fff);
+  border: 1px solid var(--border, #333);
+}
+input.prop-input:focus {
+  border-color: var(--accent, #3b82f6);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+}
+
+/* Scrollbar consistent styling */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+
+/* Consistent badge styling */
+.badge, .badge-s {
+  font-size: 9px;
+  padding: 1px 4px;
+  border-radius: 8px;
+  background: var(--accent, #3b82f6);
+  color: white;
+  font-weight: 600;
+}
+
+/* Consistent section header styling */
+.sec-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid var(--border, #333);
+}
+.sec-hdr:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+/* Consistent color dots */
+.color-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.15);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.color-dot:hover {
+  transform: scale(1.15);
+}
+.color-dot.on {
+  border-color: var(--accent, #3b82f6);
+  box-shadow: 0 0 0 2px var(--accent, #3b82f6);
+}
+
+/* ===== WCAG 2.1 Accessibility ===== */
+
+/* Skip navigation link */
+.skip-nav {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  background: var(--accent, #3b82f6);
+  color: white;
+  padding: 8px 16px;
+  z-index: 10000;
+  font-size: 14px;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+}
+.skip-nav:focus {
+  top: 0;
+}
+
+/* Visible focus indicators (WCAG 2.4.7) */
+*:focus-visible {
+  outline: 3px solid var(--accent, #3b82f6);
+  outline-offset: 2px;
+}
+
+/* Remove default outline, add visible one */
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+select:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* High contrast mode support */
+@media (forced-colors: active) {
+  .icon-btn, .hbtn, .menu-item {
+    border: 1px solid ButtonText;
+  }
+  .icon-btn.on, .hbtn.on {
+    background: Highlight;
+    color: HighlightText;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Screen reader only text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ARIA live region for dynamic content */
+.aria-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Ensure minimum touch target size (WCAG 2.5.5) */
+button, a, input[type=checkbox], input[type=radio], select {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Color contrast improvements */
+.color-dot {
+  border-color: rgba(255,255,255,0.3);
+}
+.color-dot:focus-visible {
+  outline: 3px solid var(--accent, #3b82f6);
+  outline-offset: 2px;
+}
+
+/* Keyboard navigation for toolbar */
+.header-tools:focus-within {
+  box-shadow: 0 0 0 2px var(--accent, #3b82f6);
+}
+
+/* Announcement for screen readers */
+#ariaAnnounce {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="CoachBoard Pro - Professional tactical board for sports coaches. Create formations, animations, and export videos for 7 sports.">
+<meta name="keywords" content="coach,tactics,board,soccer,futsal,basketball,volleyball,handball,formation,animation">
+<meta property="og:title" content="CoachBoard Pro - Tactical Board">
+<meta property="og:description" content="Professional tactical board for sports coaches with animation and video export.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0d1117">
+<title>CoachBoard Pro</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css'">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=12">
+<link rel="stylesheet" href="css/ui-enhancements.css?v=1">
+</head>
+<body>
+<!-- Skip navigation link (WCAG 2.4.1) -->
+<a href="#layer_0" class="skip-nav">Skip to canvas</a>
+<!-- ARIA live region for dynamic announcements -->
+<div id="ariaAnnounce" aria-live="polite" aria-atomic="true"></div>
+<!-- HEADER -->
+<header class="header" role="banner">
+  <div class="logo"><div class="logo-icon"><i class="fas fa-chess-board"></i></div><span>CoachBoard</span></div>
+  <div class="menu-bar" role="menubar" aria-label="Main menu">
+    <button class="menu-item" onclick="saveProject()" data-i18n="save" role="menuitem" aria-label="Save project"><i class="fas fa-save" style="margin-inline-end:4px"></i>حفظ</button>
+    <button class="menu-item" onclick="loadProject()" data-i18n="open" role="menuitem" aria-label="Open project"><i class="fas fa-folder-open" style="margin-inline-end:4px"></i>فتح</button>
+    <button class="menu-item" onclick="exportImg()" data-i18n="export" role="menuitem" aria-label="Export image"><i class="fas fa-download" style="margin-inline-end:4px"></i>تصدير</button>
+    <button class="menu-item" onclick="TemplateUI.toggle()" title="Templates" role="menuitem" aria-label="Templates"><i class="fas fa-th-large" style="margin-inline-end:4px"></i>قوالب</button>
+    <button class="menu-item" onclick="SessionBuilder.toggleUI()" title="Sessions" role="menuitem" aria-label="Training sessions"><i class="fas fa-calendar-alt" style="margin-inline-end:4px"></i>تدريبات</button>
+    <button class="menu-item" onclick="ExerciseLibrary.toggleUI()" title="Exercises" role="menuitem" aria-label="Exercise library"><i class="fas fa-book" style="margin-inline-end:4px"></i>تمارين</button>
+    <button class="menu-item" onclick="VideoExport.toggleSettingsUI()" title="Video Export" role="menuitem" aria-label="Export video"><i class="fas fa-video" style="margin-inline-end:4px"></i>فيديو</button>
+  </div>
+  <div class="header-actions">
+    <div class="field-style-dropdown" id="fsDropdown">
+      <button class="hbtn fs-main-btn" id="fsMainBtn" onclick="toggleFSDropdown()" title="نمط الملعب">
+        <i class="fas fa-drafting-compass"></i> <span id="fsLabel">تكتيكي</span> <i class="fas fa-caret-down"></i>
+      </button>
+      <div class="fs-dropdown-menu" id="fsMenu">
+        <div class="fs-option" onclick="selectFieldStyle('svg',this)">
+          <canvas class="fs-preview" id="fspSvg" width="60" height="36"></canvas>
+          <span>تكتيكي</span>
+        </div>
+        <div class="fs-option" onclick="selectFieldStyle('realistic',this)">
+          <canvas class="fs-preview" id="fspReal" width="60" height="36"></canvas>
+          <span>واقعي</span>
+        </div>
+      </div>
+    </div>
+    <div class="field-style-dropdown" id="orientDropdown">
+      <button class="hbtn fs-main-btn" id="orientMainBtn" onclick="toggleOrientDropdown()" title="اتجاه الملعب">
+        <i class="fas fa-mobile-alt"></i> <span id="orientLabel">أفقي</span> <i class="fas fa-caret-down"></i>
+      </button>
+      <div class="fs-dropdown-menu" id="orientMenu">
+        <div class="fs-option" onclick="setOrientation('landscape',this)">
+          <span>أفقي</span>
+        </div>
+        <div class="fs-option" onclick="setOrientation('portrait',this)">
+          <span>عمودي</span>
+        </div>
+      </div>
+    </div>
+    <div class="sep"></div>
+    <button class="hbtn icon-only" onclick="undo()" title="Undo"><i class="fas fa-undo"></i></button>
+    <button class="hbtn icon-only" onclick="redo()" title="Redo"><i class="fas fa-redo"></i></button>
+    <span id="undoIndicator" style="font-size:9px;color:var(--text3);min-width:28px;text-align:center">0/0</span>
+    <div class="sep"></div>
+
+    <div class="field-style-dropdown" id="alignDropdown" style="position:relative">
+      <button class="hbtn icon-only" onclick="toggleAlignDropdown()" title="محاذاة وتوزيع"><i class="fas fa-object-ungroup"></i></button>
+      <div class="fs-dropdown-menu" id="alignMenu">
+        <div class="fs-option" onclick="alignEls('left')"><i class="fas fa-align-left" style="margin-inline-end:6px;width:14px;text-align:center"></i><span>يسار</span></div>
+        <div class="fs-option" onclick="alignEls('centerH')"><i class="fas fa-align-center" style="margin-inline-end:6px;width:14px;text-align:center"></i><span>وسط أفقي</span></div>
+        <div class="fs-option" onclick="alignEls('right')"><i class="fas fa-align-right" style="margin-inline-end:6px;width:14px;text-align:center"></i><span>يمين</span></div>
+        <div class="fs-option" onclick="alignEls('centerV')"><i class="fas fa-arrows-alt-v" style="margin-inline-end:6px;width:14px;text-align:center"></i><span>وسط عمودي</span></div>
+        <div class="fs-option" onclick="distributeH()"><i class="fas fa-arrows-alt-h" style="margin-inline-end:6px;width:14px;text-align:center"></i><span>توزيع أفقي</span></div>
+        <div class="fs-option" onclick="distributeV()"><i class="fas fa-grip-lines" style="margin-inline-end:6px;width:14px;text-align:center"></i><span>توزيع عمودي</span></div>
+      </div>
+    </div>
+    <div class="sep"></div>
+    <button class="hbtn icon-only danger" onclick="deleteSel()"><i class="fas fa-trash-alt"></i></button>
+    <button class="hbtn danger" onclick="clearAll()" data-i18n="clear"><i class="fas fa-broom"></i> مسح</button>
+    <div class="sep"></div>
+    <button class="hbtn success" onclick="exportImg()" data-i18n="image"><i class="fas fa-image"></i> صورة</button>
+    <button class="hbtn" onclick="showExpVid()" data-i18n="video"><i class="fas fa-video"></i> فيديو</button>
+    <div class="field-style-dropdown" id="sportDropdown" style="position:relative;margin-inline:auto">
+      <button class="hbtn primary" onclick="toggleSportDropdown()" title="الرياضية"><i class="fas fa-futbol" style="margin-inline-end:2px"></i><span id="sportLabel">فوتسال</span> <i class="fas fa-caret-down"></i></button>
+      <div class="fs-dropdown-menu" id="sportMenu">
+        <div class="fs-option" onclick="setSport('futsal')"><span>فوتسال</span></div>
+        <div class="fs-option" onclick="setSport('football')"><span>كرة قدم</span></div>
+        <div class="fs-option" onclick="setSport('beach')"><span>شاطئية</span></div>
+        <div class="fs-option" onclick="setSport('mini')"><span>مصغرة</span></div>
+        <div class="fs-option" onclick="setSport('basketball')"><span>سلة</span></div>
+        <div class="fs-option" onclick="setSport('volleyball')"><span>كرة طائرة</span></div>
+        <div class="fs-option" onclick="setSport('handball')"><span>كرة يد</span></div>
+      </div>
+    </div>
+    <div class="sep"></div>
+    <button class="hbtn icon-only" id="themeToggle" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+    <button class="hbtn icon-only" onclick="openSettings()"><i class="fas fa-cog"></i></button>
+    <button class="hbtn icon-only" onclick="exportProjectJSON()" title="Export JSON"><i class="fas fa-file-export"></i></button>
+    <button class="hbtn icon-only" onclick="importProjectJSON()" title="Import JSON"><i class="fas fa-file-import"></i></button>
+  </div>
+</header>
+<!-- MAIN -->
+<div class="main">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar-l" id="sidebarL" role="complementary" aria-label="Tool palette">
+    <!-- Team selector -->
+    <div class="sb-section">
+      <div class="team-sel">
+        <button class="tm-btn tmA on" id="tmABtn" onclick="setTeam('A')" data-i18n="teamA">فريق أ</button>
+        <button class="tm-btn tmB" id="tmBBtn" onclick="setTeam('B')" data-i18n="teamB">فريق ب</button>
+      </div>
+      <div id="teamInfoPanel" style="padding:4px 6px;border-top:1px solid var(--border)">
+        <div style="display:flex;gap:4px;align-items:center;margin-bottom:3px">
+          <input type="text" id="teamNameInput" class="prop-input" style="flex:1;font-size:10px;padding:3px 6px" placeholder="اسم الفريق..." oninput="updateTeamName(this.value)">
+          <input type="number" id="teamScoreInput" class="prop-input" style="width:40px;font-size:11px;padding:3px;text-align:center" value="0" min="0" max="99" oninput="updateTeamScore(+this.value)">
+        </div>
+      </div>
+    </div>
+    <!-- Team Manager -->
+    <div class="sb-section">
+      <div style="padding:6px">
+        <button class="hbtn primary" style="width:100%;font-size:10px" onclick="openTeamManager()"><i class="fas fa-users-cog"></i> <span data-i18n="team_manager">إدارة الفرق</span></button>
+      </div>
+    </div>
+    <!-- Select & Move tools moved to zoom-ctrl above canvas -->
+    <!-- Players -->
+    <div class="sb-section" role="region" aria-label="Player tools">
+      <div class="sb-hdr" onclick="togSec(this)"><i class="fas fa-users cat-icon" style="color:#4a90d9"></i><i class="fas fa-chevron-down chev"></i><span data-i18n="players">اللاعبون</span></div>
+      <div class="sb-body" role="toolbar" aria-label="Player tools">
+        <button class="icon-btn" data-tool="p_stand" onclick="setTool('p_stand')" title="لاعب" role="radio" aria-checked="false" aria-label="Player"><i class="fas fa-user" style="color:var(--tmA)"></i><span class="icon-label">لاعب</span></button>
+        <button class="icon-btn" data-tool="gk_stand" onclick="setTool('gk_stand')" title="حارس" role="radio" aria-checked="false" aria-label="Goalkeeper"><i class="fas fa-user-shield" style="color:var(--tmAgk)"></i><span class="icon-label">حارس</span></button>
+        <button class="icon-btn" data-tool="ball" onclick="setTool('ball')" title="كرة" role="radio" aria-checked="false" aria-label="Ball"><i class="fas fa-circle" style="font-size:8px;color:#eee"></i><span class="icon-label">كرة</span></button>
+        <button class="icon-btn" data-tool="coach" onclick="setTool('coach')" title="مدرب" role="radio" aria-checked="false" aria-label="Coach"><i class="fas fa-clipboard-list" style="color:#f0c040"></i><span class="icon-label">مدرب</span></button>
+      </div>
+      <div style="padding:4px 6px;border-top:1px solid var(--border)">
+        <div style="font-size:9px;font-weight:700;color:var(--text3);margin-bottom:3px"><i class="fas fa-tshirt" style="color:#f0c040;margin-inline-end:3px"></i>نمط العرض</div>
+        <div style="display:flex;gap:3px" id="styleToggleBody">
+          <button class="icon-btn on" data-style="circle" onclick="setPlayerStyle('circle')" title="دائرة" style="width:52px;height:32px"><i class="fas fa-circle" style="font-size:10px;color:#4a90d9"></i><span class="icon-label">دائرة</span></button>
+          <button class="icon-btn" data-style="jersey" onclick="setPlayerStyle('jersey')" title="قميص" style="width:52px;height:32px"><i class="fas fa-tshirt" style="color:#4a90d9"></i><span class="icon-label">قميص</span></button>
+        </div>
+      </div>
+    </div>
+    <!-- Equipment -->
+    <div class="sb-section">
+      <div class="sb-hdr" onclick="togSec(this)"><i class="fas fa-tools cat-icon" style="color:#ff6b2b"></i><i class="fas fa-chevron-down chev"></i><span data-i18n="equipment">المعدات</span></div>
+      <div class="sb-body">
+        <button class="icon-btn" data-tool="cone" onclick="setTool('cone')" title="قمعة (9)"><i class="fas fa-caret-up" style="color:#ff6b2b"></i><span class="icon-label" data-i18n="cone">قمعة</span></button>
+        <button class="icon-btn" data-tool="coneDisc" onclick="setTool('coneDisc')" title="قمعة مسطحة"><i class="fas fa-circle" style="color:#ff6b2b;font-size:10px"></i><span class="icon-label" data-i18n="cone_disc">مسطحة</span></button>
+        <button class="icon-btn" data-tool="coneTall" onclick="setTool('coneTall')" title="قمعة مرتفعة"><i class="fas fa-caret-up" style="color:#e84040;font-size:18px"></i><span class="icon-label" data-i18n="cone_tall">مرتفعة</span></button>
+        <button class="icon-btn" data-tool="ring" onclick="setTool('ring')" title="حلقة"><i class="far fa-circle" style="color:#d29922"></i><span class="icon-label" data-i18n="ring">حلقة</span></button>
+        <button class="icon-btn" data-tool="barrier" onclick="setTool('barrier')" title="حاجز"><i class="fas fa-grip-lines" style="color:var(--danger)"></i><span class="icon-label" data-i18n="barrier">حاجز</span></button>
+        <button class="icon-btn" data-tool="hurdle" onclick="setTool('hurdle')" title="عائق قفز"><i class="fas fa-minus" style="color:var(--warning)"></i><span class="icon-label" data-i18n="hurdle">عائق</span></button>
+        <button class="icon-btn" data-tool="mannequin" onclick="setTool('mannequin')" title="دمية تدريب"><i class="fas fa-child" style="color:#c070f0"></i><span class="icon-label" data-i18n="mannequin">دمية</span></button>
+        <button class="icon-btn" data-tool="smallGoal" onclick="setTool('smallGoal')" title="مرمى صغير"><i class="fas fa-door-open" style="color:#40c0e8"></i><span class="icon-label" data-i18n="small_goal">مرمى</span></button>
+        <button class="icon-btn" data-tool="flag" onclick="setTool('flag')" title="علم"><i class="fas fa-flag" style="color:var(--success)"></i><span class="icon-label" data-i18n="flag">علم</span></button>
+        <button class="icon-btn" data-tool="ladder" onclick="setTool('ladder')" title="سلم"><i class="fas fa-th" style="color:#c070f0"></i><span class="icon-label" data-i18n="ladder">سلم</span></button>
+        <button class="icon-btn" data-tool="stick" onclick="setTool('stick')" title="عصا"><i class="fas fa-grip-lines-vertical" style="color:var(--text2)"></i><span class="icon-label" data-i18n="stick">عصا</span></button>
+        <button class="icon-btn" data-tool="hurdleArc" onclick="setTool('hurdleArc')" title="عائق منحني"><i class="fas fa-arrow-right" style="color:#e8960c;transform:rotate(90deg)"></i><span class="icon-label">منحني</span></button>
+        <button class="icon-btn" data-tool="bib" onclick="setTool('bib')" title="صدرية"><i class="fas fa-tshirt" style="color:#4a90d9;font-size:11px"></i><span class="icon-label">صدرية</span></button>
+        <button class="icon-btn" data-tool="reboundBoard" onclick="setTool('reboundBoard')" title="لوحة ارتداد"><i class="fas fa-border-all" style="color:#40c0e8"></i><span class="icon-label">ارتداد</span></button>
+      </div>
+    </div>
+    <!-- Shapes & Zones -->
+    <div class="sb-section">
+      <div class="sb-hdr" onclick="togSec(this)"><i class="fas fa-shapes cat-icon" style="color:#40c0e8"></i><i class="fas fa-chevron-down chev"></i><span data-i18n="shapes_zones">أشكال ومناطق</span></div>
+      <div class="sb-body hide">
+        <button class="icon-btn" data-tool="zoneCircle" onclick="setTool('zoneCircle')" title="دائرة (6)"><i class="far fa-circle" style="color:#00e5ff"></i><span class="icon-label" data-i18n="circle">دائرة</span></button>
+        <button class="icon-btn" data-tool="zoneRect" onclick="setTool('zoneRect')" title="مستطيل"><i class="far fa-square" style="color:#00e5ff"></i><span class="icon-label" data-i18n="rect">مستطيل</span></button>
+        <button class="icon-btn" data-tool="zoneTriangle" onclick="setTool('zoneTriangle')" title="مثلث"><i class="fas fa-play" style="transform:rotate(-90deg);color:#d29922"></i><span class="icon-label" data-i18n="triangle">مثلث</span></button>
+        <button class="icon-btn" data-tool="zoneRect2C" onclick="setTool('zoneRect2C')" title="مستطيل بلونين"><i class="fas fa-th-large" style="color:#ff69b4"></i><span class="icon-label">لونين</span></button>
+        <button class="icon-btn" data-tool="spinRing" onclick="setTool('spinRing')" title="دائرة دوارة"><i class="fas fa-sync-alt" style="color:#00e5ff"></i><span class="icon-label">دوارة</span></button>
+        <button class="icon-btn" data-tool="zone18" onclick="setTool('zone18')" title="18 منطقة"><i class="fas fa-th" style="color:#40c0e8"></i><span class="icon-label">18</span></button>
+      </div>
+    </div>
+    <!-- Arrows -->
+    <div class="sb-section">
+      <div class="sb-hdr" onclick="togSec(this)"><i class="fas fa-long-arrow-alt-right cat-icon" style="color:var(--success)"></i><i class="fas fa-chevron-down chev"></i><span data-i18n="arrows">الأسهم</span></div>
+      <div class="sb-body hide">
+        <button class="icon-btn" data-tool="arrowSolid" onclick="setTool('arrowSolid')" title="تمرير (4)"><i class="fas fa-long-arrow-alt-right"></i><span class="icon-label" data-i18n="pass">تمرير</span></button>
+        <button class="icon-btn" data-tool="arrowDashed" onclick="setTool('arrowDashed')" title="ركض (5)"><i class="fas fa-route" style="color:#d29922"></i><span class="icon-label" data-i18n="run_arr">ركض</span></button>
+        <button class="icon-btn" data-tool="arrowDotted" onclick="setTool('arrowDotted')" title="اتباع"><i class="fas fa-right-left" style="color:#40c0e8"></i><span class="icon-label" data-i18n="follow">اتباع</span></button>
+        <button class="icon-btn" data-tool="arrowCurved" onclick="setTool('arrowCurved')" title="منحني"><i class="fas fa-bezier-curve" style="color:#c070f0"></i><span class="icon-label" data-i18n="curved">منحني</span></button>
+        <button class="icon-btn" data-tool="arrowMulti" onclick="setTool('arrowMulti')" title="نقاط تمركز"><i class="fas fa-project-diagram" style="color:#50e870"></i><span class="icon-label">تمركز</span></button>
+        <button class="icon-btn" data-tool="arrowDoublePoly" onclick="setTool('arrowDoublePoly')" title="سهم مزدوج"><i class="fas fa-arrow-right" style="color:#f0c040"></i><span class="icon-label">مزدوج</span></button>
+        <button class="icon-btn" data-tool="arrowSlalom" onclick="setTool('arrowSlalom')" title="ميلان"><i class="fas fa-sliders-h" style="color:#ff6b2b;transform:rotate(90deg)"></i><span class="icon-label">ميلان</span></button>
+      </div>
+    </div>
+    <!-- Drawing & Text -->
+    <div class="sb-section">
+      <div class="sb-hdr" onclick="togSec(this)"><i class="fas fa-pen cat-icon" style="color:#f0c040"></i><i class="fas fa-chevron-down chev"></i><span data-i18n="drawing">رسم ونصوص</span></div>
+      <div class="sb-body hide">
+        <button class="icon-btn" data-tool="pen" onclick="setTool('pen')" title="قلم (7)"><i class="fas fa-pen"></i><span class="icon-label" data-i18n="pen">قلم</span></button>
+        <button class="icon-btn" data-tool="highlighter" onclick="setTool('highlighter')" title="تظليل"><i class="fas fa-highlighter" style="color:#f0c040"></i><span class="icon-label" data-i18n="highlighter">تظليل</span></button>
+        <button class="icon-btn" data-tool="text" onclick="setTool('text')" title="نص (8)"><i class="fas fa-font"></i><span class="icon-label" data-i18n="text">نص</span></button>
+        <button class="icon-btn" data-tool="number" onclick="setTool('number')" title="رقم"><i class="fas fa-hashtag" style="color:var(--warning)"></i><span class="icon-label" data-i18n="number">رقم</span></button>
+      </div>
+    </div>
+    <!-- Formations -->
+    <div class="sb-section">
+      <div class="sb-hdr" onclick="togSec(this)"><i class="fas fa-chess cat-icon" style="color:var(--accent)"></i><i class="fas fa-chevron-down chev"></i><span data-i18n="formations">التشكيلات</span></div>
+      <div class="sb-body hide" id="fmBody">
+      </div>
+    </div>
+  </aside>
+  <button class="stb stb-l" id="stbL" title="إخفاء القائمة"><i class="fas fa-chevron-left"></i></button>
+  <div class="resize-h resize-h-l" id="resizeL"></div>
+  <!-- CANVAS -->
+  <div class="canvas-area" id="cc" role="application" aria-label="Tactical board canvas">
+    <canvas id="cv" aria-label="CoachBoard tactical board" role="img"></canvas>
+    <div class="snap-ind" id="snapInd"><i class="fas fa-th"></i> <span data-i18n="grid_snap">محاذاة الشبكة</span></div>
+    <div class="rubber-band" id="rubberBand"></div>
+    <div class="canvas-info"><span><span id="ecnt">0</span> <span data-i18n="elements">عناصر</span></span><span id="zoomInfo">100%</span></div>
+    <div class="zoom-ctrl" onclick="event.stopPropagation()">
+      <button class="zoom-btn" onclick="setTool('select')" title="تحديد (V)" id="btnSelect"><i class="fas fa-mouse-pointer"></i></button>
+      <button class="zoom-btn" onclick="setTool('move')" title="تحريك (W)" id="btnMove"><i class="fas fa-arrows-alt"></i></button>
+      <div class="sep"></div>
+      <button class="zoom-btn" onclick="zoomOut()"><i class="fas fa-minus"></i></button>
+      <span class="zoom-label" id="zoomLbl">100%</span>
+      <button class="zoom-btn" onclick="zoomIn()"><i class="fas fa-plus"></i></button>
+      <button class="zoom-btn" onclick="zoomReset()"><i class="fas fa-crosshairs"></i></button>
+      <button class="zoom-btn" onclick="toggleFullscreen()" title="Fullscreen (F11)"><i class="fas fa-expand-arrows-alt"></i></button>
+    </div>
+  </div>
+  <div class="resize-h resize-h-r" id="resizeR"></div>
+  <button class="stb stb-r" id="stbR" title="إخفاء القائمة"><i class="fas fa-chevron-right"></i></button>
+  <!-- RIGHT SIDEBAR -->
+  <aside class="sidebar-r" id="sidebarR" role="complementary" aria-label="Properties and layers">
+    <div class="panel">
+      <div class="panel-hdr" onclick="togPanel(this)"><span><i class="fas fa-sliders-h" style="margin-inline-end:6px"></i><span data-i18n="properties">خصائص العنصر</span></span><i class="fas fa-chevron-down chev"></i></div>
+      <div class="panel-body" id="ppc" role="region" aria-label="Element properties"><div style="text-align:center;padding:16px;color:var(--text3)"><i class="fas fa-hand-pointer" style="font-size:20px;opacity:0.3;display:block;margin-bottom:6px"></i><p style="font-size:11px" data-i18n="select_hint">اختر عنصراً لتعديل خصائصه</p></div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-hdr cl" onclick="togPanel(this)"><span><i class="fas fa-layer-group" style="margin-inline-end:6px"></i><span data-i18n="layers">الطبقات</span></span><i class="fas fa-chevron-down chev"></i></div>
+      <div class="panel-body hide" id="layersPanel" role="region" aria-label="Layer management"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-hdr cl" onclick="togPanel(this)"><span><i class="fas fa-sticky-note" style="margin-inline-end:6px"></i><span data-i18n="notes">ملاحظات</span></span><i class="fas fa-chevron-down chev"></i></div>
+      <div class="panel-body hide"><textarea class="notes-area" id="notesArea" data-i18n-ph="notes_ph" placeholder="اكتب ملاحظات هنا..." oninput="saveNotes()"></textarea></div>
+    </div>
+  </aside>
+</div>
+<!-- BOTTOM PANEL -->
+<div class="bottom-panel">
+  <div class="bp-top">
+    <button class="bp-btn" onclick="animPlay()" id="playBtn"><i class="fas fa-play"></i> <span data-i18n="play">تشغيل</span></button>
+    <button class="bp-btn" onclick="animStop()"><i class="fas fa-stop"></i></button>
+    <div class="sep"></div>
+    <button class="bp-btn primary" onclick="saveStep()"><i class="fas fa-plus"></i> <span data-i18n="save_scene">حفظ مشهد</span></button>
+    <button class="bp-btn" onclick="updateStep()"><i class="fas fa-save"></i> <span data-i18n="update">تحديث</span></button>
+    <button class="bp-btn danger" onclick="clearSteps()"><i class="fas fa-broom"></i></button>
+    <span class="bp-total" id="spTotal"></span>
+  </div>
+  <div class="bp-scenes" id="stepsRow"></div>
+</div>
+<!-- BOTTOM TOOLBAR -->
+<div class="bottom-bar"></div>
+<!-- FLOATING TOUCH TOOLBAR -->
+<div class="touch-toolbar" id="touchToolbar">
+  <button class="tt-btn" onclick="setTool('select')" data-tool="select" title="Select"><i class="fas fa-mouse-pointer"></i></button>
+  <button class="tt-btn" onclick="setTool('p_stand')" data-tool="p_stand" title="Player"><i class="fas fa-user"></i></button>
+  <button class="tt-btn" onclick="setTool('ball')" data-tool="ball" title="Ball"><i class="fas fa-circle"></i></button>
+  <button class="tt-btn" onclick="setTool('arrowSolid')" data-tool="arrowSolid" title="Arrow"><i class="fas fa-long-arrow-alt-right"></i></button>
+  <button class="tt-btn" onclick="setTool('zoneCircle')" data-tool="zoneCircle" title="Zone"><i class="far fa-circle"></i></button>
+  <button class="tt-btn" onclick="setTool('pen')" data-tool="pen" title="Draw"><i class="fas fa-pen"></i></button>
+  <button class="tt-btn" onclick="undo()" title="Undo"><i class="fas fa-undo"></i></button>
+  <button class="tt-btn" onclick="redo()" title="Redo"><i class="fas fa-redo"></i></button>
+</div>
+<!-- MODALS -->
+<div class="modal-overlay" id="setModal"><div class="modal">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <h2><i class="fas fa-cog"></i><span data-i18n="pitch_settings">إعدادات الملاعب</span></h2>
+    <button class="hbtn icon-only danger" onclick="closeSet()"><i class="fas fa-times"></i></button>
+  </div>
+  <p style="font-size:12px;color:var(--text2);margin-bottom:12px" data-i18n="upload_hint">ارفع صور ملاعب مخصصة كخلفية.</p>
+  <div class="modal-row"><label data-i18n="futsal">فوتسال:</label><input type="file" accept="image/*" onchange="loadCI('futsal',this)"><img class="pv-img" id="pvFutsal"></div>
+  <div class="modal-row"><label data-i18n="football">كرة قدم:</label><input type="file" accept="image/*" onchange="loadCI('football',this)"><img class="pv-img" id="pvFootball"></div>
+  <div class="modal-row"><label data-i18n="beach">شاطئية:</label><input type="file" accept="image/*" onchange="loadCI('beach',this)"><img class="pv-img" id="pvBeach"></div>
+  <div class="modal-row"><label data-i18n="mini">مصغرة:</label><input type="file" accept="image/*" onchange="loadCI('mini',this)"><img class="pv-img" id="pvMini"></div>
+  <div class="modal-row" style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px"><label data-i18n="pitch_color">لون الملعب:</label><input type="color" id="pitchColorPicker" value="#1a7a3a" onchange="setPitchColor(this.value)" style="width:40px;height:28px;border:none;cursor:pointer"><button class="hbtn" onclick="resetPitchColor()" data-i18n="reset_color" style="font-size:10px;padding:4px 8px">إعادة</button></div>
+  <div class="modal-actions"><button class="hbtn primary" onclick="closeSet()" data-i18n="done">تم</button><button class="hbtn danger" onclick="resetCI()" data-i18n="reset">إعادة الافتراضي</button></div>
+</div></div>
+<!-- VIDEO EXPORT DIALOG -->
+<div class="modal-overlay" id="expVidModal"><div class="modal exp-vid-dialog">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <h2><i class="fas fa-video"></i><span>تصدير فيديو</span></h2>
+    <button class="hbtn icon-only danger" onclick="hideExpVid()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="exp-vid-grid">
+    <div class="exp-vid-col">
+      <label><i class="fas fa-file-video" style="margin-inline-end:3px"></i> اسم الملف:</label>
+      <input type="text" id="vidFileName" class="prop-input" value="coachboard" oninput="ExportManager.setFileName(this.value)">
+      <label><i class="fas fa-film" style="margin-inline-end:3px"></i> صيغة الفيديو:</label>
+      <select id="vidFormatSel" class="prop-input">
+        <option value="webm">WebM (VP8)</option>
+        <option value="webmvp9">WebM HD (VP9)</option>
+        <option value="mp4">MP4 (H.264)</option>
+        <option value="mkv">MKV (Matroska)</option>
+      </select>
+      <label><i class="fas fa-tachometer-alt" style="margin-inline-end:3px"></i> الجودة:</label>
+      <select id="vidQualitySel" class="prop-input">
+        <option value="low">منخفضة (4 Mbps)</option>
+        <option value="medium">متوسطة (8 Mbps)</option>
+        <option value="high" selected>عالية (16 Mbps)</option>
+        <option value="ultra">فائقة (32 Mbps)</option>
+        <option value="max">قصى (50 Mbps)</option>
+      </select>
+      <label><i class="fas fa-clock" style="margin-inline-end:3px"></i> معدل الإطارات:</label>
+      <select id="vidFpsSel" class="prop-input" onchange="ExportManager.state.vidFps=+this.value">
+        <option value="24">24 fps</option>
+        <option value="30" selected>30 fps</option>
+        <option value="60">60 fps</option>
+      </select>
+      <label><i class="fas fa-expand" style="margin-inline-end:3px"></i> دقة الفيديو:</label>
+      <select id="vidResSel" class="prop-input" onchange="ExportManager.state.vidRes=this.value">
+        <option value="720p">HD 720p (1280×720)</option>
+        <option value="1080p" selected>Full HD 1080p (1920×1080)</option>
+        <option value="1440p">QHD 1440p (2560×1440)</option>
+        <option value="2160p">4K UHD (3840×2160)</option>
+        <option value="native">أصلي (Native)</option>
+      </select>
+      <label><i class="fas fa-exchange-alt" style="margin-inline-end:3px"></i> انتقال:</label>
+      <select id="vidTransSel" class="prop-input">
+        <option value="none">بدون</option>
+        <option value="fade" selected>تلاشي (Fade)</option>
+        <option value="slide">انزلاق (Slide)</option>
+        <option value="wipe">مسح (Wipe)</option>
+      </select>
+    </div>
+    <div class="exp-vid-col">
+      <!-- ADVANCED OPTIONS -->
+      <details class="exp-advanced">
+        <summary class="exp-adv-summary"><i class="fas fa-sliders-h" style="margin-inline-end:4px"></i> خيارات متقدمة</summary>
+        <div class="exp-adv-content">
+          <label><i class="fas fa-font" style="margin-inline-end:3px"></i> نص على الفيديو:</label>
+          <input type="text" id="vidText" class="prop-input" placeholder="اسم المدرب أو الفريق...">
+          <div style="display:flex;gap:4px;margin-top:4px">
+            <input type="color" id="vidTextColor" value="#ffffff" style="width:30px;height:24px;border:none;cursor:pointer">
+            <select id="vidTextPos" class="prop-input" style="flex:1">
+              <option value="bottom">أسفل</option>
+              <option value="top">أعلى</option>
+              <option value="center">وسط</option>
+            </select>
+          </div>
+          <label style="margin-top:4px;font-size:9px;color:var(--text3)">حجم الخط: <span id="vidTextSizeVal">18</span>px</label>
+          <input type="range" id="vidTextSize" min="10" max="48" value="18" style="width:100%" oninput="document.getElementById('vidTextSizeVal').textContent=this.value">
+          <label style="margin-top:8px"><i class="fas fa-stamp" style="margin-inline-end:3px"></i> شعار مائي:</label>
+          <input type="file" id="vidWmFile" accept="image/*" onchange="ExportManager.loadVideoWatermark(this)" style="font-size:9px">
+          <div style="display:flex;gap:4px;align-items:center;margin-top:4px">
+            <label style="font-size:9px;color:var(--text3);min-width:30px">مكان:</label>
+            <select id="vidLogoPos" class="prop-input" style="flex:1">
+              <option value="bottom-right">أسفل يمين</option>
+              <option value="bottom-left">أسفل يسار</option>
+              <option value="top-right">أعلى يمين</option>
+              <option value="top-left">أعلى يسار</option>
+              <option value="center">وسط</option>
+            </select>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;margin-top:4px">
+            <label style="font-size:9px;color:var(--text3);min-width:30px">حجم:</label>
+            <input type="range" id="vidLogoSize" min="5" max="50" value="20" style="flex:1">
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;margin-top:4px">
+            <label style="font-size:9px;color:var(--text3);min-width:30px">شفافية:</label>
+            <input type="range" id="vidWmOpacity" min="5" max="80" value="15" style="flex:1">
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+  <!-- PROGRESS BAR (always visible during export) -->
+  <div id="vidProgress" style="display:none;margin:12px 0">
+    <div class="exp-progress-track">
+      <div id="vidProgressBar" class="exp-progress-fill"></div>
+      <span id="vidProgressTxt" class="exp-progress-text">جاري التحضير...</span>
+    </div>
+    <div style="text-align:center;margin-top:4px;font-size:10px;color:var(--text2)"><span id="vidProgressPct">0%</span></div>
+  </div>
+  <div style="padding:8px 0;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px">
+    <label style="font-size:10px;color:var(--text2);display:flex;align-items:center;gap:4px">
+      <i class="fas fa-folder-open" style="color:var(--accent)"></i>
+      مكان الحفظ:
+    </label>
+    <select id="vidSavePref" class="prop-input" style="width:auto;flex:1" onchange="ExportManager.setSavePref(this.value)">
+      <option value="ask">اسألني في كل مرة (اختيار المكان)</option>
+      <option value="auto">تحميل تلقائي (المجلد الافتراضي)</option>
+    </select>
+  </div>
+  <div id="vidSaveNote" style="display:none;padding:6px 0;font-size:9px;color:#f0a050;line-height:1.5">
+    <i class="fas fa-info-circle"></i>
+    لاختيار مكان الحفظ: افتح إعدادات المتصفح <b>chrome://settings/downloads</b> ثم فعّل <b>"Ask where to save each file before downloading"</b>
+    <br>
+    <i class="fas fa-server" style="margin-inline-start:14px"></i>
+    أو شغّل التطبيق عبر خادم محلي (HTTP) بدلاً من file://
+  </div>
+  <div class="modal-actions">
+    <button class="hbtn success" id="vidExportBtn" onclick="doExportVid()" style="padding:8px 28px"><i class="fas fa-download"></i> تصدير الآن</button>
+    <button class="hbtn danger" onclick="hideExpVid()"><i class="fas fa-times"></i> إلغاء</button>
+  </div>
+</div></div>
+<!-- Save Project Modal -->
+<div class="modal-overlay" id="saveModal"><div class="modal">
+  <h2><i class="fas fa-save"></i><span data-i18n="save_project">حفظ المشروع</span></h2>
+  <input type="text" class="project-input" id="projectNameInput" data-i18n-ph="project_name_ph" placeholder="اسم المشروع...">
+  <div class="modal-actions"><button class="hbtn success" onclick="doSaveProject()"><i class="fas fa-save"></i> <span data-i18n="save">حفظ</span></button><button class="hbtn" onclick="closeSaveModal()" data-i18n="cancel">إلغاء</button></div>
+</div></div>
+<!-- Load Project Modal -->
+<div class="modal-overlay" id="loadModal"><div class="modal">
+  <h2><i class="fas fa-folder-open"></i><span data-i18n="open_project">فتح مشروع</span></h2>
+  <div class="saved-list" id="savedList"></div>
+  <div class="modal-actions"><button class="hbtn" onclick="closeLoadModal()" data-i18n="close">إغلاق</button></div>
+</div></div>
+<!-- SHORTCUTS MODAL (integrated into Settings) -->
+<!-- Server URL Modal -->
+<div class="modal-overlay" id="serverUrlModal"><div class="modal">
+  <h2><i class="fas fa-server"></i> <span>إعدادات الخادم</span></h2>
+  <input type="text" class="project-input" id="serverUrlInput" placeholder="https://example.com/api/rosters">
+  <div class="modal-actions"><button class="hbtn success" onclick="confirmServerUrl()"><i class="fas fa-check"></i> <span>حفظ</span></button><button class="hbtn" onclick="closeServerUrlModal()"><span>إلغاء</span></button></div>
+</div></div>
+<div class="toast" id="toast"></div>
+<!-- Context Menu -->
+<div class="ctx-menu" id="ctxMenu">
+  <div class="ctx-item" onclick="ctxAction('delete')"><i class="fas fa-trash-alt"></i> <span data-i18n="delete">حذف</span></div>
+  <div class="ctx-item" onclick="ctxAction('duplicate')"><i class="fas fa-copy"></i> <span data-i18n="duplicate">تكرار</span></div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="ctxAction('front')"><i class="fas fa-arrow-up"></i> إلى الأمام</div>
+  <div class="ctx-item" onclick="ctxAction('forward')"><i class="fas fa-angle-up"></i> للأمام خطوة</div>
+  <div class="ctx-item" onclick="ctxAction('backward')"><i class="fas fa-angle-down"></i> للخلف خطوة</div>
+  <div class="ctx-item" onclick="ctxAction('back')"><i class="fas fa-arrow-down"></i> إلى الخلف</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="ctxAction('lock')"><i class="fas fa-lock"></i> <span id="ctxLockLabel">قفل</span></div>
+  <div class="ctx-item" onclick="ctxAction('hide')"><i class="fas fa-eye-slash"></i> <span id="ctxHideLabel">إخفاء</span></div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="ctxAction('zoomIn')"><i class="fas fa-search-plus"></i> تكبير</div>
+  <div class="ctx-item" onclick="ctxAction('zoomOut')"><i class="fas fa-search-minus"></i> تصغير</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="ctxAction('selectAll')"><i class="fas fa-object-group"></i> تحديد الكل</div>
+</div>
+<!-- Text/Number Insert Modal -->
+<div class="modal-overlay" id="textModal"><div class="modal" style="max-width:420px">
+  <h2 id="textModalTitle">إدراج نص</h2>
+  <div class="prop-group"><div class="prop-label">المحتوى</div><input type="text" id="txtModalInput" class="prop-input" placeholder="اكتب النص..."></div>
+  <div class="prop-group"><div class="prop-label">نوع الخط</div><select id="txtModalFont" style="width:100%;padding:4px;border-radius:4px;background:var(--bg2);color:var(--text);border:1px solid var(--border);font-size:11px"><option value="Cairo,Inter">Cairo</option><option value="Inter,Cairo">Inter</option><option value="Arial,sans-serif">Arial</option><option value="'Courier New',monospace">Courier New</option><option value="Georgia,serif">Georgia</option><option value="Tahoma,sans-serif">Tahoma</option></select></div>
+  <div class="prop-group"><div class="prop-label">حجم الخط <span id="txtModalSizeVal">24</span></div><input type="range" id="txtModalSize" min="8" max="72" value="24" oninput="document.getElementById('txtModalSizeVal').textContent=this.value"></div>
+  <div class="prop-group"><div class="prop-label">لون النص</div><input type="color" id="txtModalColor" value="#ffffff" style="width:100%;height:24px;border:none;cursor:pointer"></div>
+  <div class="prop-group"><div class="prop-label">لون الخلفية</div><div style="display:flex;gap:4px;align-items:center"><input type="color" id="txtModalBg" value="#000000" onchange="delete this.dataset.none" style="width:36px;height:24px;border:none;cursor:pointer;flex-shrink:0"><button class="angle-btn" id="txtModalBgNone" onclick="var b=document.getElementById('txtModalBg');b.value='#000000';b.dataset.none='1'" style="flex-shrink:0">لا شيء</button></div></div>
+  <div class="prop-group"><div class="prop-label">إطار</div><div style="display:flex;gap:4px;align-items:center"><button class="angle-btn" id="txtModalBorderToggle" onclick="var b=document.getElementById('txtModalBorder');b.style.display=b.style.display==='none'?'block':'none';this.classList.toggle('on')">تفعيل</button><input type="color" id="txtModalBorder" value="#ffffff" style="width:36px;height:24px;border:none;cursor:pointer;flex-shrink:0;display:none"></div></div>
+  <div class="prop-group"><div style="display:flex;gap:4px"><button class="angle-btn on" id="txtModalBold" onclick="this.classList.toggle('on')"><b>B</b></button><button class="angle-btn" id="txtModalItalic" onclick="this.classList.toggle('on')"><i>I</i></button></div></div>
+  <div class="modal-actions">
+    <button class="hbtn success" onclick="confirmTextModal()"><i class="fas fa-check"></i> <span>إدراج</span></button>
+    <button class="hbtn" onclick="closeTextModal()"><span>إلغاء</span></button>
+  </div>
+</div></div>
+<!-- Generic Prompt Modal -->
+<div class="modal-overlay" id="promptModal"><div class="modal" style="max-width:380px">
+  <h2 id="promptModalTitle">Prompt</h2>
+  <input type="text" class="project-input" id="promptModalInput">
+  <div class="modal-actions">
+    <button class="hbtn success" onclick="closePromptModal(true)"><i class="fas fa-check"></i> <span>موافق</span></button>
+    <button class="hbtn" onclick="closePromptModal(false)"><span>إلغاء</span></button>
+  </div>
+</div></div>
+<!-- Generic Confirm Modal -->
+<div class="modal-overlay" id="confirmModal"><div class="modal" style="max-width:360px">
+  <h2 id="confirmModalTitle">تأكيد</h2>
+  <p id="confirmModalMsg" style="font-size:13px;color:var(--text2);margin:8px 0 16px"></p>
+  <div class="modal-actions">
+    <button class="hbtn danger" onclick="closeConfirmModal(true)"><i class="fas fa-check"></i> <span>نعم</span></button>
+    <button class="hbtn" onclick="closeConfirmModal(false)"><span>إلغاء</span></button>
+  </div>
+</div></div>
+<!-- WELCOME MODAL -->
+<div class="modal-overlay" id="welcomeModal">
+<div class="modal welcome-modal">
+  <div class="welcome-header">
+    <div class="welcome-logo"><i class="fas fa-chess-board"></i></div>
+    <h1 data-i18n="welcome">مرحباً</h1>
+    <p class="welcome-sub" data-i18n="welcome_msg">لوحة تكتيكية احترافية للمدربين</p>
+  </div>
+  <div class="welcome-features">
+    <div class="welcome-feat"><i class="fas fa-users"></i><span>7 رياضات مع تشكيلات جاهزة</span></div>
+    <div class="welcome-feat"><i class="fas fa-video"></i><span>تصدير فيديو MP4/WebM/MKV</span></div>
+    <div class="welcome-feat"><i class="fas fa-paint-brush"></i><span>رسم تكتيكي SVG احترافي</span></div>
+    <div class="welcome-feat"><i class="fas fa-mouse-pointer"></i><span>سحب وإفلات + تكبير/تصغير</span></div>
+    <div class="welcome-feat"><i class="fas fa-keyboard"></i><span>اختصارات لوحة المفاتيح</span></div>
+    <div class="welcome-feat"><i class="fas fa-file-export"></i><span>مشاركة المشاريع JSON</span></div>
+  </div>
+  <div class="welcome-tips">
+    <h3><i class="fas fa-lightbulb"></i> <span data-i18n="tip">نصائح سريعة</span></h3>
+    <div class="welcome-tip"><kbd>🖱️ Scroll</kbd> <span data-i18n="tip1">تكبير/تصغير</span></div>
+    <div class="welcome-tip"><kbd>F11</kbd> <span data-i18n="tip2">شاشة كاملة</span></div>
+    <div class="welcome-tip"><kbd>1-9</kbd> أدوات سريعة</div>
+    <div class="welcome-tip"><kbd>Ctrl+Z/Y</kbd> تراجع/إعادة</div>
+  </div>
+  <button class="hbtn primary welcome-start" onclick="closeWelcome()" data-i18n="get_started">ابدأ الآن</button>
+</div>
+</div>
+<!-- TEAM MANAGER MODAL -->
+<div class="modal-overlay" id="teamMgrModal">
+<div class="modal team-mgr-modal">
+  <div class="team-mgr-hdr">
+    <h2><i class="fas fa-users-cog"></i> <span data-i18n="team_manager">إدارة الفرق</span></h2>
+    <button class="hbtn icon-only danger" onclick="closeTeamManager()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="team-mgr-body">
+    <!-- Roster List -->
+    <div class="team-mgr-left">
+      <div class="team-mgr-toolbar">
+        <button class="hbtn primary" style="font-size:10px;flex:1" onclick="createNewRoster()"><i class="fas fa-plus"></i> <span data-i18n="new_team">فريق جديد</span></button>
+        <button class="hbtn" style="font-size:10px" onclick="syncRostersToServer()" title="حفظ على الخادم"><i class="fas fa-cloud-upload-alt"></i></button>
+        <button class="hbtn" style="font-size:10px" onclick="loadRostersFromServer()" title="تحميل من الخادم"><i class="fas fa-cloud-download-alt"></i></button>
+        <button class="hbtn" style="font-size:10px" onclick="promptServerUrl()" title="إعدادات الخادم"><i class="fas fa-server"></i></button>
+      </div>
+      <div class="roster-list" id="rosterList"></div>
+    </div>
+    <!-- Player Editor -->
+    <div class="team-mgr-right">
+      <div id="rosterEditor" class="roster-editor">
+        <div class="roster-empty" id="rosterEmpty">
+          <i class="fas fa-users" style="font-size:32px;opacity:0.2;margin-bottom:8px"></i>
+          <p data-i18n="select_roster">اختر فريقاً أو أنشئ فريقاً جديداً</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="team-mgr-footer">
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+      <label style="font-size:10px;color:var(--text2)" data-i18n="assign_team">تعيين للفريق:</label>
+      <button class="hbtn" id="assignTeamA" style="font-size:10px" onclick="assignRosterToTeam('A')"><span data-i18n="teamA">فريق أ</span></button>
+      <button class="hbtn" id="assignTeamB" style="font-size:10px" onclick="assignRosterToTeam('B')"><span data-i18n="teamB">فريق ب</span></button>
+      <button class="hbtn danger" id="unassignBtn" style="font-size:10px;display:none" onclick="unassignRoster()"><i class="fas fa-unlink"></i></button>
+      <label style="font-size:10px;color:var(--text2);margin-inline-start:8px" data-i18n="formation">التشكيلة:</label>
+      <select id="rosterFmtSelect" class="prop-input" style="width:auto;font-size:10px;padding:3px 6px" onchange="onFormationChange()"></select>
+    </div>
+    <button class="hbtn primary" onclick="confirmAndPlaceRoster()"><i class="fas fa-check"></i> <span data-i18n="confirm_place">تأكيد ووضع على الملعب</span></button>
+    <button class="hbtn danger" onclick="removeTeamFromPitch(curTeam)" style="font-size:10px"><i class="fas fa-trash"></i> <span data-i18n="remove_team">إزالة الفريق من الملعب</span></button>
+  </div>
+</div>
+</div>
+<!-- FORMATION TOOLTIP -->
+<div class="fm-tooltip" id="fmTooltip"></div>
+<!-- EXPORT IMAGE DIALOG -->
+<div class="modal-overlay" id="expImgModal"><div class="modal exp-img-dialog">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <h2><i class="fas fa-image"></i><span>تصدير صورة</span></h2>
+    <button class="hbtn icon-only danger" onclick="closeExpImg()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="exp-img-layout">
+    <div class="exp-img-preview" id="expImgPreview">
+      <canvas id="expCv"></canvas>
+      <div class="exp-crop-bar" id="expCropBar" style="display:none">
+        <button class="hbtn success exp-crop-btn" onclick="ExportManager.confirmCrop()"><i class="fas fa-check"></i> تأكيد</button>
+        <button class="hbtn danger exp-crop-btn" onclick="ExportManager.cancelCrop()"><i class="fas fa-times"></i> إلغاء</button>
+      </div>
+    </div>
+    <div class="exp-img-opts">
+      <div class="exp-section">
+        <label><i class="fas fa-crop-alt" style="margin-inline-end:3px"></i> منطقة التصدير:</label>
+        <select id="expArea" class="prop-input" onchange="ExportManager.onAreaChange(this)">
+          <option value="all">الصورة كاملة</option>
+          <option value="custom">تحديد منطقة من الصورة ✂️</option>
+        </select>
+      </div>
+      <div class="exp-section">
+        <label><i class="fas fa-file-image" style="margin-inline-end:3px"></i> الصيغة:</label>
+        <select id="expFormat" class="prop-input">
+          <option value="png">PNG (بدون ضغط)</option>
+          <option value="jpeg">JPEG (خفيف)</option>
+          <option value="webp">WebP (حديث)</option>
+        </select>
+      </div>
+      <div class="exp-section">
+        <label><i class="fas fa-expand" style="margin-inline-end:3px"></i> الجودة:</label>
+        <select id="expQuality" class="prop-input" onchange="ExportManager.updateImagePreview()">
+          <option value="1">عادية (1x)</option>
+          <option value="2" selected>عالية (2x)</option>
+          <option value="3">فائقة (3x)</option>
+          <option value="4">أقصى (4x)</option>
+        </select>
+      </div>
+      <!-- ADVANCED OPTIONS -->
+      <div class="exp-section">
+        <details class="exp-advanced">
+          <summary class="exp-adv-summary"><i class="fas fa-sliders-h" style="margin-inline-end:4px"></i> خيارات متقدمة</summary>
+          <div class="exp-adv-content">
+            <label><i class="fas fa-font" style="margin-inline-end:3px"></i> إضافة نص:</label>
+            <input type="text" id="expText" class="prop-input" placeholder="اسم المدرب أو الفريق..." oninput="ExportManager.updateImagePreview()">
+            <div style="display:flex;gap:4px;margin-top:4px">
+              <input type="color" id="expTextColor" value="#ffffff" style="width:30px;height:24px;border:none;cursor:pointer" onchange="ExportManager.updateImagePreview()">
+              <select id="expTextPos" class="prop-input" style="flex:1" onchange="ExportManager.updateImagePreview()">
+                <option value="bottom">أسفل</option>
+                <option value="top">أعلى</option>
+                <option value="center">وسط</option>
+              </select>
+            </div>
+            <label style="margin-top:6px;font-size:9px;color:var(--text3)">حجم الخط: <span id="expTextSizeVal">18</span>px</label>
+            <input type="range" id="expTextSize" min="10" max="48" value="18" style="width:100%" oninput="document.getElementById('expTextSizeVal').textContent=this.value;ExportManager.updateImagePreview()">
+            <label style="margin-top:10px"><i class="fas fa-stamp" style="margin-inline-end:3px"></i> شعار مائي:</label>
+            <div style="display:flex;gap:4px;align-items:center">
+              <input type="file" id="expWatermark" accept="image/*" onchange="ExportManager.loadImageWatermark(this)" style="font-size:9px;flex:1">
+            </div>
+            <div style="display:flex;gap:4px;align-items:center;margin-top:6px">
+              <label style="font-size:9px;color:var(--text3);min-width:30px">مكان:</label>
+              <select id="expLogoPos" class="prop-input" style="flex:1" onchange="ExportManager.updateImagePreview()">
+                <option value="bottom-right">أسفل يمين</option>
+                <option value="bottom-left">أسفل يسار</option>
+                <option value="top-right">أعلى يمين</option>
+                <option value="top-left">أعلى يسار</option>
+                <option value="center">وسط</option>
+              </select>
+            </div>
+            <div style="display:flex;gap:4px;align-items:center;margin-top:4px">
+              <label style="font-size:9px;color:var(--text3);min-width:30px">حجم:</label>
+              <input type="range" id="expLogoSize" min="5" max="60" value="25" style="flex:1" oninput="document.getElementById('expLogoSizeVal').textContent=this.value+'%';ExportManager.updateImagePreview()">
+              <span style="font-size:9px;color:var(--text3);min-width:25px" id="expLogoSizeVal">25%</span>
+            </div>
+            <div style="display:flex;gap:4px;align-items:center;margin-top:4px">
+              <label style="font-size:9px;color:var(--text3);min-width:30px">شفافية:</label>
+              <input type="range" id="expWmOpacity" min="5" max="80" value="15" style="flex:1" oninput="document.getElementById('expWmOpVal').textContent=this.value+'%';ExportManager.updateImagePreview()">
+              <span style="font-size:9px;color:var(--text3);min-width:25px" id="expWmOpVal">15%</span>
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+  <div style="padding:8px 12px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px">
+    <label style="font-size:10px;color:var(--text2);display:flex;align-items:center;gap:4px">
+      <i class="fas fa-file-signature" style="color:var(--accent)"></i>
+      اسم الملف:
+    </label>
+    <input type="text" id="expFileName" class="prop-input" style="flex:1" placeholder="اسم الملف (اختياري)" value="">
+  </div>
+  <div style="padding:8px 12px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px">
+    <label style="font-size:10px;color:var(--text2);display:flex;align-items:center;gap:4px">
+      <i class="fas fa-folder-open" style="color:var(--accent)"></i>
+      مكان الحفظ:
+    </label>
+    <select id="expSavePref" class="prop-input" style="width:auto;flex:1" onchange="ExportManager.setSavePref(this.value)">
+      <option value="ask">اسألني في كل مرة (اختيار المكان)</option>
+      <option value="auto">تحميل تلقائي (المجلد الافتراضي)</option>
+    </select>
+  </div>
+  <div id="expSaveNote" style="display:none;padding:6px 12px;font-size:9px;color:#f0a050;line-height:1.5">
+    <i class="fas fa-info-circle"></i>
+    لاختيار مكان الحفظ: افتح إعدادات المتصفح <b>chrome://settings/downloads</b> ثم فعّل <b>"Ask where to save each file before downloading"</b>
+    <br>
+    <i class="fas fa-server" style="margin-inline-start:14px"></i>
+    أو شغّل التطبيق عبر خادم محلي (HTTP) بدلاً من file://
+  </div>
+  <div class="modal-actions">
+    <button class="hbtn success" onclick="doExportImg()"><i class="fas fa-download"></i> تصدير</button>
+    <button class="hbtn" onclick="exportSVG()" style="background:#8b5cf6"><i class="fas fa-file-code"></i> SVG</button>
+    <button class="hbtn danger" onclick="closeExpImg()"><i class="fas fa-times"></i> إلغاء</button>
+  </div>
+</div></div>
+<script src="js/i18n.js?v=1"></script>
+<script src="js/state.js?v=1"></script>
+<script src="js/core/ResourceManager.js?v=1"></script>
+<script src="js/core/ThemeManager.js?v=1"></script>
+<script src="js/core/SettingsManager.js?v=1"></script>
+<script src="js/core/EventBus.js?v=1"></script>
+<script src="js/core/ToolRegistry.js?v=1"></script>
+<script src="js/core/GeometryEngine.js?v=1"></script>
+<script src="js/core/VectorEngine.js?v=1"></script>
+<script src="js/core/DocumentModel.js?v=1"></script>
+<script src="js/core/BackgroundJob.js?v=1"></script>
+<script src="js/core/ExtensionPoints.js?v=1"></script>
+<script src="js/core/PublicAPI.js?v=1"></script>
+<script src="js/core/SceneGraph.js?v=1"></script>
+<script src="js/core/CommandPattern.js?v=1"></script>
+<script src="js/core/PagesUI.js?v=1"></script>
+<script src="js/core/OfflineSupport.js?v=1"></script>
+<script src="js/core/VersionControl.js?v=1"></script>
+<script src="js/core/I18n.js?v=1"></script>
+<script src="js/core/TemplateSystem.js?v=1"></script>
+<script src="js/core/TemplateUI.js?v=1"></script>
+<script src="js/core/VideoExport.js?v=1"></script>
+<script src="js/core/SessionBuilder.js?v=1"></script>
+<script src="js/core/ExerciseLibrary.js?v=1"></script>
+<script src="js/core/VisualEffects.js?v=1"></script>
+<script src="js/core/DesignSystem.js?v=1"></script>
+<script src="js/core/SVGGenerator.js?v=1"></script>
+<script src="js/core/MaterialSystem.js?v=1"></script>
+<script src="js/core/core-init.js?v=1"></script>
+<script src="js/helpers.js?v=1"></script>
+<script src="js/engine/Engine.js?v=1"></script>
+<script src="js/engine/CanvasPool.js?v=1"></script>
+<script src="js/engine/LayeredRenderer.js?v=1"></script>
+<script src="js/engine/Element.js?v=1"></script>
+<script src="js/engine/SelectionSystem.js?v=1"></script>
+<script src="js/engine/HistorySystem.js?v=1"></script>
+<script src="js/engine/Camera.js?v=1"></script>
+<script src="js/engine/GridSystem.js?v=1"></script>
+  <script src="js/engine/Clipboard.js?v=1"></script>
+
+  <script src="js/engine/PerspectiveSystem.js?v=1"></script>
+  <script src="js/engine/Benchmark.js?v=1"></script>
+
+  <script src="js/objects/GoalPerspective.js?v=1"></script>
+
+  <script src="js/engine/AnimationSystem.js?v=1"></script>
+<script src="js/engine/SnapSystem.js?v=1"></script>
+<script src="js/engine/CollisionSystem.js?v=1"></script>
+<script src="js/store/Store.js?v=1"></script>
+<script src="js/store/Settings.js?v=1"></script>
+<script src="js/store/ViewportState.js?v=1"></script>
+<script src="js/store/SelectionState.js?v=1"></script>
+<script src="js/store/HistoryState.js?v=1"></script>
+<script src="js/sections/sections.js?v=1"></script>
+<script src="js/sections/section-select.js?v=1"></script>
+<script src="js/sections/section-players.js?v=1"></script>
+<script src="js/sections/section-equipment.js?v=1"></script>
+<script src="js/sections/section-shapes.js?v=1"></script>
+<script src="js/sections/section-arrows.js?v=1"></script>
+<script src="js/sections/section-drawing.js?v=1"></script>
+<script src="js/sections/section-formations.js?v=1"></script>
+<script src="js/ui.js?v=1"></script>
+<script src="js/panels.js?v=1"></script>
+<script src="js/tools.js?v=1"></script>
+<script src="js/save-load.js?v=1"></script>
+<script src="js/teams.js?v=3"></script>
+<script src="js/export.js?v=14"></script>
+<script src="js/touch.js?v=2"></script>
+<script src="js/renderer/Renderer.js?v=1"></script>
+<script src="js/renderer/PlayerRenderer.js?v=1"></script>
+<script src="js/renderer/EquipmentRenderer.js?v=1"></script>
+<script src="js/renderer/ArrowRenderer.js?v=1"></script>
+<script src="js/renderer/ShapeRenderer.js?v=1"></script>
+<script src="js/renderer/TextRenderer.js?v=1"></script>
+<script src="js/objects/Player.js?v=1"></script>
+<script src="js/objects/Ball.js?v=1"></script>
+<script src="js/objects/Goal.js?v=1"></script>
+<script src="js/objects/MiniGoal.js?v=1"></script>
+<script src="js/objects/Cone.js?v=1"></script>
+<script src="js/objects/Pole.js?v=1"></script>
+<script src="js/objects/Gate.js?v=1"></script>
+<script src="js/objects/Ladder.js?v=1"></script>
+<script src="js/objects/Dummy.js?v=1"></script>
+<script src="js/objects/Arrow.js?v=1"></script>
+<script src="js/objects/Shape.js?v=1"></script>
+<script src="js/objects/Text.js?v=1"></script>
+<script src="svg/players/index.js?v=1"></script>
+<script src="svg/equipment/index.js?v=1"></script>
+<script src="svg/goals/index.js?v=1"></script>
+<script src="svg/balls/index.js?v=1"></script>
+<script src="svg/cones/index.js?v=1"></script>
+<script src="svg/symbols/index.js?v=1"></script>
+<script src="js/engine/PitchRenderer.js?v=1"></script>
+<script src="js/engine/EventSystem.js?v=1"></script>
+<script src="script.js?v=23"></script>
+</body>
+</html>
