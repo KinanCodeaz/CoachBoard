@@ -1,0 +1,35 @@
+# Node / build
+node_modules/
+dist/
+/lib/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Python / caches
+__pycache__/
+*.pyc
+
+# Logs / temp
+*.log
+*.tmp
+
+# Media / big files (review: consider Git LFS for large media files)
+*.mp4
+*.mov
+*.exe
+*.zip
+
+# Local environment files
+.env
+
+# Mac resource forks
+._*
