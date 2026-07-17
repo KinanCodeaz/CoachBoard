@@ -1,0 +1,23 @@
+# CoachBoard Pro - Git Ignore
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Node
+node_modules/
+
+# Logs
+*.log
+
+# Temporary
+*.tmp
+*.temp

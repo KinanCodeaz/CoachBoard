@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="CoachBoard Pro - Send us your feedback and suggestions to improve the tactical board.">
+<meta name="robots" content="noindex, nofollow">
+<title>CoachBoard Pro - Feedback</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css'">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="feedback.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="fb-header">
+  <div class="fb-logo">
+    <div class="fb-logo-icon"><i class="fas fa-chess-board"></i></div>
+    <span>CoachBoard Pro</span>
+  </div>
+  <a href="../index.html" class="fb-back">
+    <i class="fas fa-arrow-left"></i>
+    <span>العودة للتطبيق</span>
+  </a>
+</header>
+
+<!-- MAIN -->
+<div class="fb-container">
+  <h1 class="fb-title"><i class="fas fa-comment-dots"></i> شاركنا اقتراحاتك</h1>
+  <p class="fb-subtitle">
+    نرحب بجميع اقتراحاتك وملاحظاتك لتحسين CoachBoard Pro.<br>
+    مساعدتك تساعدنا في تطوير أداة أفضل للمدربين.
+  </p>
+
+  <!-- RATE LIMIT WARNING -->
+  <div class="fb-rate-limit" id="fbRateLimit">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span></span>
+  </div>
+
+  <!-- SUCCESS MESSAGE -->
+  <div class="fb-success" id="fbSuccess">
+    <i class="fas fa-check-circle fb-success-icon"></i>
+    <div class="fb-success-title">شكراً لاقتراحك!</div>
+    <div class="fb-success-msg">
+      تم استلام ملاحظتك بنجاح. سنراجعها ونعمل على تحسين التطبيق بناءً على اقتراحاتكم.
+    </div>
+    <button class="fb-success-btn" onclick="location.reload()">
+      <i class="fas fa-plus"></i> إرسال اقتراح آخر
+    </button>
+  </div>
+
+  <!-- FEEDBACK FORM -->
+  <div class="fb-card">
+    <div class="fb-card-title">
+      <i class="fas fa-edit"></i>
+      <span>اكتب اقتراحك</span>
+    </div>
+
+    <form id="fbForm" novalidate>
+
+      <!-- HONEYPOT - invisible to humans, bots fill this -->
+      <div class="hp-field" aria-hidden="true">
+        <label for="fbWebsite">Website</label>
+        <input type="text" id="fbWebsite" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
+      <!-- NAME -->
+      <div class="fb-group">
+        <label class="fb-label" for="fbName">
+          <i class="fas fa-user" style="margin-inline-end:4px"></i>
+          الاسم <span class="required">*</span>
+        </label>
+        <input type="text" id="fbName" class="fb-input" placeholder="اسمك الكامل..." maxlength="60" required autocomplete="name">
+        <div class="fb-error-msg" id="fbNameError"></div>
+      </div>
+
+      <!-- EMAIL -->
+      <div class="fb-group">
+        <label class="fb-label" for="fbEmail">
+          <i class="fas fa-envelope" style="margin-inline-end:4px"></i>
+          البريد الإلكتروني <span class="required">*</span>
+        </label>
+        <input type="email" id="fbEmail" class="fb-input" placeholder="example@email.com" maxlength="100" required autocomplete="email" dir="ltr">
+        <div class="fb-error-msg" id="fbEmailError"></div>
+      </div>
+
+      <!-- FEEDBACK TYPE -->
+      <div class="fb-group">
+        <label class="fb-label" for="fbType">
+          <i class="fas fa-tag" style="margin-inline-end:4px"></i>
+          نوع الاقتراح
+        </label>
+        <select id="fbType" class="fb-select fb-input">
+          <option value="suggestion">اقتراح تحسين</option>
+          <option value="feature">ميزة جديدة مطلوبة</option>
+          <option value="bug">الإبلاغ عن مشكلة</option>
+          <option value="general">ملاحظة عامة</option>
+        </select>
+      </div>
+
+      <!-- MESSAGE -->
+      <div class="fb-group">
+        <label class="fb-label" for="fbMessage">
+          <i class="fas fa-comment" style="margin-inline-end:4px"></i>
+          رسالتك <span class="required">*</span>
+        </label>
+        <textarea id="fbMessage" class="fb-textarea" placeholder="اكتب اقتراحك أو ملاحظتك هنا بالتفصيل..." maxlength="2000" required></textarea>
+        <div class="fb-char-count" id="fbCharCount">0 / 2000</div>
+        <div class="fb-error-msg" id="fbMessageError"></div>
+      </div>
+
+      <!-- MATH CAPTCHA -->
+      <div class="fb-captcha-box">
+        <div class="fb-captcha-question" id="fbCaptchaQuestion">? + ? = ?</div>
+        <input type="number" id="fbCaptchaAnswer" class="fb-captcha-input" placeholder="?" required dir="ltr">
+        <button type="button" class="fb-captcha-refresh" id="fbCaptchaRefresh" title="سؤال جديد">
+          <i class="fas fa-sync-alt"></i>
+        </button>
+        <div class="fb-captcha-hint">حل العملية الحسابية proving you're human</div>
+      </div>
+      <div class="fb-error-msg" id="fbCaptchaAnswerError" style="margin-top:-12px;margin-bottom:12px"></div>
+
+      <!-- SUBMIT -->
+      <div class="fb-submit-wrap">
+        <button type="submit" class="fb-submit" id="fbSubmitBtn">
+          <i class="fas fa-paper-plane"></i>
+          إرسال الاقتراح
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- PREVIOUS FEEDBACK -->
+  <div class="fb-prev-section">
+    <div class="fb-prev-title">
+      <i class="fas fa-comments"></i>
+      <span>آخر الاقتراحات</span>
+    </div>
+    <div id="fbPrevList"></div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="fb-footer">
+  <p>
+    <i class="fas fa-chess-board" style="margin-inline-end:4px"></i>
+    CoachBoard Pro &copy; 2026 |
+    <a href="../index.html">العودة للتطبيق</a>
+  </p>
+  <p style="margin-top:4px;font-size:10px">
+    جميع الاقتراحات تُراجع يدوياً. نحتفظ بالحق في حذف المحتوى غير المناسب.
+  </p>
+</footer>
+
+<script src="feedback.js"></script>
+</body>
+</html>

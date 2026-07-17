@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 180" width="260" height="180">
+  <defs>
+    <linearGradient id="GoalPost" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8b939d"/>
+      <stop offset="0.28" stop-color="#e9eef3"/>
+      <stop offset="0.5" stop-color="#ffffff"/>
+      <stop offset="0.72" stop-color="#e9eef3"/>
+      <stop offset="1" stop-color="#8b939d"/>
+    </linearGradient>
+    <linearGradient id="GoalBar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8b939d"/>
+      <stop offset="0.28" stop-color="#e9eef3"/>
+      <stop offset="0.5" stop-color="#ffffff"/>
+      <stop offset="0.72" stop-color="#e9eef3"/>
+      <stop offset="1" stop-color="#8b939d"/>
+    </linearGradient>
+    <pattern id="GoalNet" width="12" height="12" patternUnits="userSpaceOnUse">
+      <path d="M6 0 L12 6 L6 12 L0 6 Z" fill="none" stroke="#ffffff" stroke-width="0.8" opacity="0.55"/>
+    </pattern>
+  </defs>
+
+  <g id="goal">
+    <g id="shadow">
+      <path d="M45 154 C100 166 200 166 240 154 C200 148 100 148 45 154 Z" fill="#000000" opacity="0.08"/>
+    </g>
+
+    <g id="frame-back" fill="#c4cad1" stroke="#aab1b9" stroke-width="0.6">
+      <path d="M76 132 L76 27 L88 27 L88 132 Z"/>
+      <path d="M214 132 L214 27 L226 27 L226 132 Z"/>
+      <path d="M76 39 L76 27 L226 27 L226 39 Z"/>
+      <path d="M56 45 L82 27" fill="none"/>
+      <path d="M194 45 L220 27" fill="none"/>
+      <path d="M56 150 L82 132" fill="none"/>
+      <path d="M194 150 L220 132" fill="none"/>
+    </g>
+
+    <g id="net">
+      <path d="M62 57 L88 39 L214 39 L188 57 L188 150 L214 132 L88 132 L62 150 Z" fill="url(#GoalNet)"/>
+    </g>
+
+    <g id="frame" fill="url(#GoalPost)" stroke="#7d868f" stroke-width="0.5">
+      <path d="M50 150 L50 51 A6 6 0 0 1 62 51 L62 150 Z"/>
+      <path d="M188 150 L188 51 A6 6 0 0 1 200 51 L200 150 Z"/>
+      <path d="M50 57 L50 51 A6 6 0 0 1 56 45 L194 45 A6 6 0 0 1 200 51 L200 57 Z" fill="url(#GoalBar)"/>
+    </g>
+  </g>
+</svg>
